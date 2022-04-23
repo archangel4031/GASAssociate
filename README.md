@@ -17,15 +17,25 @@ The plugin contains all the necessary C++ files required to make Gameplay Abilit
 
 ###### Use Standalone Plugin Folder
 
- 1. Download the Plugins folder from the [***Releases***](https://github.com/archangel4031/GASAssociate/releases) Section according to your required Engine Version
- 2. If working with a Blueprint Only Project, first add a new C++ Class of Actor. If not continue to next step
- 3. Paste the Plugins folder in the Project Root Directory
- 4. Right Click on your .uproject file and select ***Generate Visual Studio Project Files***
- 5. Open the Visual Studio and build the project for first time use.
- 6. Once compiled, open the Engine and start using GAS
+ - Download the Plugins folder from the [***Releases***](https://github.com/archangel4031/GASAssociate/releases) Section according to your required Engine Version
+ - If working with a Blueprint Only Project, first add a new C++ Class of Actor. If not continue to next step
+ - Paste the Plugins folder in the Project Root Directory
+ - Right Click on your .uproject file and select ***Generate Visual Studio Project Files***
+ - Open the Visual Studio and build the project for first time use.
+ - Once compiled, open the Engine and start using GAS
 
-**NOTE:** See linked video for further information on the capabilities of the plugin
+**NOTES:** 
 
+ - See linked video for further information on the capabilities of the plugin
+ - The Plugin does not have *Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets without spaces
+ 
 ### Video:
-Refer to the video for more information. 
+Refer to the video for more information. (Ver 1.0.0)
 [GAS Associate | A plugin for Unreal Engine 5 and Unreal Engine 4](https://youtu.be/ett9ZTHYN8g)
+
+#### Update Log
+
+ - Ver 1.1.0
+	 - Added an option to automatically create a Max Value Attribute to handle clamping (see Example Project)
+	 - Added Server Only functions that only execute as server. Generic versions of functions still exists and may be useful in some cases
+	 - More comments in C++ Code

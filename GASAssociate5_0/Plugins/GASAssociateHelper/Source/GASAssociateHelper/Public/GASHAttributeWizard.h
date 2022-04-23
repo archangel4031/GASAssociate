@@ -24,6 +24,8 @@ struct FAttributeSettings
 	UPROPERTY(config, EditAnywhere, Category = Custom)
 	int32 MaxValue;
 
+	UPROPERTY(config, EditAnywhere, Category = Custom)
+	bool UseMaxValueAttribute;
 };
 
 

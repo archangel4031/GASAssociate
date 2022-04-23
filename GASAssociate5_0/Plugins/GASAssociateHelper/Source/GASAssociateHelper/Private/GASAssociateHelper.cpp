@@ -17,27 +17,31 @@
 #include <string>
 #include <regex>
 
+//Get project Config and Plugins Directory Paths
 FString ConfigDir = FPaths::ProjectConfigDir();
 FString PluginDir = FPaths::ProjectPluginsDir();
 
 std::string const BaseConfigPath = TCHAR_TO_UTF8(*ConfigDir);
 std::string const BasePluginPath = TCHAR_TO_UTF8(*PluginDir);
 
-
+//Make Path to be used for reading and writing files
 std::string configFilePath = BaseConfigPath + "DefaultGASAttributes.ini";
 std::string outAttrPathHeader = BasePluginPath + "GASAssociate/Source/GASAssociate/Public/GASAttributeSet.h";
 std::string outAttrPathCPP = BasePluginPath + "GASAssociate/Source/GASAssociate/Private/GASAttributeSet.cpp";
 std::string outCharPathHeader = BasePluginPath + "GASAssociate/Source/GASAssociate/Public/GASCharacter.h";
 std::string outCharPathCPP = BasePluginPath + "GASAssociate/Source/GASAssociate/Private/GASCharacter.cpp";
 
-
+//Store Attributes in vectors to be filled and used to modify GAS Source Files
 std::vector<std::string> vAttributeNames = {};
 std::vector<int> vAttributeMin = {};
 std::vector<int> vAttributeMax = {};
+std::vector<bool> vUseMaxValueAttribute = {};
 
+//FN: open and store Config file in buffer
 std::string openFile(std::string inFilePath)
 {
-	//cout << "====In Open file FN====" << endl;
+	//Store complete content from file in a Buffer.
+	//Code copied from StackOverflow. I honestly have no idea how it work, but it does!
 
 	std::ifstream MyReadFile(inFilePath);
 	std::string outFileBuffer = "";
@@ -50,11 +54,13 @@ std::string openFile(std::string inFilePath)
 
 	return outFileBuffer;
 }
+
+//FN: Fill Names of Attributes from Config File
 void fillAttributeName(std::string inString)
 {
-	//cout << "====In Fill Attribute Name FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Filling Attributes Array Names"));
 
+	//Declare Variabeles for regex pattern matching
 	std::smatch match;
 	std::regex regexAttributeName("AttributeName=[\"a-zA-Z\"]+");
 	std::string tempAttrName;
@@ -62,18 +68,21 @@ void fillAttributeName(std::string inString)
 	size_t StartPos = 0;
 	size_t EndPos = 0;
 
+	//Read Config Buffer line-by-line
 	std::istringstream inStringStream(inString);
 
+	//Iterate through line and search for pattern.
 	while (getline(inStringStream, bufferLine))
 	{
+		//This While Loop can be replaced I think, but all examples on internet use this so...
 		while (regex_search(bufferLine, match, regexAttributeName))
 		{
+			//Store in temp Variable
 			for (auto x : match)
 			{
-				//cout << x << endl;
 				tempAttrName = x;
 			}
-
+			//Find " and trim them from final string. Store in vector
 			StartPos = tempAttrName.find("\"");
 			if (StartPos != std::string::npos)
 			{
@@ -90,11 +99,12 @@ void fillAttributeName(std::string inString)
 	}
 }
 
+//FN: Fill Min Values of Attributes from Config File
 void fillAttributeMins(std::string inString)
 {
-	//cout << "====In Fill Attribute Mins FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Filling Attributes Array Min Values"));
 
+	//Declare Variabeles for regex pattern matching
 	std::smatch match;
 	std::regex regexAttributeName("MinValue=[0-9]+");
 	std::string tempAttrName;
@@ -102,18 +112,21 @@ void fillAttributeMins(std::string inString)
 	size_t StartPos = 9;
 	size_t EndPos = 0;
 
+	//Read Config Buffer line-by-line
 	std::istringstream inStringStream(inString);
 
+	//Iterate through line and search for pattern.
 	while (getline(inStringStream, bufferLine))
 	{
+		//This While Loop can be replaced I think, but all examples on internet use this so...
 		while (regex_search(bufferLine, match, regexAttributeName))
 		{
+			//Store in temp Variable
 			for (auto x : match)
 			{
-				//cout << x << endl;
 				tempAttrName = x;
 			}
-
+			//Get Length of match and only push Numeric Value to vector
 			EndPos = tempAttrName.length();
 			tempAttrName = tempAttrName.substr(StartPos, EndPos);
 			vAttributeMin.push_back(stoi(tempAttrName));
@@ -122,11 +135,12 @@ void fillAttributeMins(std::string inString)
 	}
 }
 
+//FN: Fill Max Values of Attributes from Config File
 void fillAttributeMax(std::string inString)
 {
-	//cout << "====In Fill Attribute Maxs FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Filling Attributes Array Max Values"));
 
+	//Declare Variabeles for regex pattern matching
 	std::smatch match;
 	std::regex regexAttributeName("MaxValue=[0-9]+");
 	std::string tempAttrName;
@@ -134,18 +148,22 @@ void fillAttributeMax(std::string inString)
 	size_t StartPos = 9;
 	size_t EndPos = 0;
 
+	//Read Config Buffer line-by-line
 	std::istringstream inStringStream(inString);
 
+	//Iterate through line and search for pattern.
 	while (getline(inStringStream, bufferLine))
 	{
+		//This While Loop can be replaced I think, but all examples on internet use this so...
 		while (regex_search(bufferLine, match, regexAttributeName))
 		{
+			//Store in temp Variable
 			for (auto x : match)
 			{
-				//cout << x << endl;
 				tempAttrName = x;
 			}
 
+			//Get Length of match and only push Numeric Value to vector
 			EndPos = tempAttrName.length();
 			tempAttrName = tempAttrName.substr(StartPos, EndPos);
 			vAttributeMax.push_back(stoi(tempAttrName));
@@ -154,22 +172,67 @@ void fillAttributeMax(std::string inString)
 	}
 }
 
+//FN: Fill Use Max Value of Attributes from Config File
+void fillAttributeBools(std::string inString)
+{
+	UE_LOG(LogTemp, Warning, TEXT("=====>Filling Attributes Array Use Max Value Attribute"));
+
+	//Declare Variabeles for regex pattern matching
+	std::smatch match;
+	std::regex regexAttributeName("UseMaxValueAttribute=[a-zA-Z]+");
+	std::string tempAttrName;
+	std::string bufferLine = "";
+	size_t StartPos = 21;
+	size_t EndPos = 0;
+
+	//Read Config Buffer line-by-line
+	std::istringstream inStringStream(inString);
+
+	//Iterate through line and search for pattern.
+	while (getline(inStringStream, bufferLine))
+	{
+		//This While Loop can be replaced I think, but all examples on internet use this so...
+		while (regex_search(bufferLine, match, regexAttributeName))
+		{
+			//Store in temp Variable
+			for (auto x : match)
+			{
+				tempAttrName = x;
+			}
+
+			//Push True if string is true and false if string is false
+			EndPos = tempAttrName.length();
+			tempAttrName = tempAttrName.substr(StartPos, EndPos);
+			if (tempAttrName == "True")
+			{
+				vUseMaxValueAttribute.push_back(true);
+			}
+			else
+			{
+				vUseMaxValueAttribute.push_back(false);
+			}
+			
+			break;
+		}
+	}
+}
+
+//FN: Write to Attribute Header File GASAttribute.h
 void writeAttrToHeader()
 {
-	//cout << "====In Write Attribute To Header FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Modifying GASAttributeSet Header File"));
-
+	
+	//Variable to store lines of Original File that are not to be modified (used to reconstruct file later)
 	std::vector<std::string> fileBufferPre;
 
-	//read original file to buffer
+	//read original file to buffer and define variable for regex
 	std::ifstream fileStream(outAttrPathHeader);
 	std::string lineBuffer = "";
 	bool breakFlag = false;
-
 	std::smatch match;
 	std::regex regexPattern("//==PATTERN==");
 
-
+	//Read file line by line and store content in vector until a specific PATTERN is found
 	while (getline(fileStream, lineBuffer))
 	{
 		fileBufferPre.push_back(lineBuffer);
@@ -191,20 +254,33 @@ void writeAttrToHeader()
 
 	fileStream.close();
 
+	//Open file in WRITE mode to output chanegs
 	std::ofstream fileStreamO(outAttrPathHeader, std::ios_base::trunc);
 
+	//Write the unmodified section
 	for (const std::string& str : fileBufferPre)
 	{
 		fileStreamO << str << std::endl;
 	}
 
-	//Write Attributes
+	int counter = 0;
+	//Write Attributes. Make necessary changes if UseMaxValue is True
 	for (const std::string& str : vAttributeNames)
 	{
 		fileStreamO << "\t" << "//Attribute for " << str << std::endl;
 		fileStreamO << "\t" << "UPROPERTY(BlueprintReadOnly, Category = \"Attributes\", ReplicatedUsing = OnRep_" << str << ")" << std::endl;
 		fileStreamO << "\t" << "FGameplayAttributeData " << str << ";" << std::endl;
 		fileStreamO << "\t" << "ATTRIBUTE_ACCESSORS(UGASAttributeSet, " << str << ")" << std::endl << std::endl;
+
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStreamO << "\t" << "//Attribute for Max" << str << std::endl;
+			fileStreamO << "\t" << "UPROPERTY(BlueprintReadOnly, Category = \"Attributes\", ReplicatedUsing = OnRep_Max" << str << ")" << std::endl;
+			fileStreamO << "\t" << "FGameplayAttributeData Max" << str << ";" << std::endl;
+			fileStreamO << "\t" << "ATTRIBUTE_ACCESSORS(UGASAttributeSet, Max" << str << ")" << std::endl << std::endl;
+		}
+
+		counter++;
 	}
 
 	//Write Delegates
@@ -216,10 +292,20 @@ void writeAttrToHeader()
 
 	//Write OnRepFuncitons
 	fileStreamO << "\t//Replication Functions for Attributes\n";
+
+	int counter2 = 0;
 	for (const std::string& str : vAttributeNames)
-	{
+	{	
 		fileStreamO << "\t" << "UFUNCTION()\n"
 			<< "\t" << "virtual void OnRep_" << str << "(const FGameplayAttributeData& Old" << str << ");\n";
+
+		if (vUseMaxValueAttribute.at(counter2))
+		{
+			fileStreamO << "\t" << "UFUNCTION()\n"
+				<< "\t" << "virtual void OnRep_Max" << str << "(const FGameplayAttributeData& OldMax" << str << ");\n";
+		}
+
+		counter2++;
 	}
 
 	fileStreamO << "\n};\n";
@@ -227,6 +313,7 @@ void writeAttrToHeader()
 	fileStreamO.close();
 }
 
+//FN: Make function Post GE Exec used in GASAttribute.cpp file
 void writePostGEExec(std::ofstream& fileStream)
 {
 	int counter = 0;
@@ -234,46 +321,83 @@ void writePostGEExec(std::ofstream& fileStream)
 	fileStream << "void UGASAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)\n"
 		<< "{\n\tSuper::PostGameplayEffectExecute(Data);\n\n";
 
+	//Write Post GE Section for each attribute. Make necessary changes if UseMaxValue is True
 	for (const std::string& str : vAttributeNames)
 	{
-		fileStream << "\t" << "if (Data.EvaluatedData.Attribute == Get" << str << "Attribute())\n"
-			<< "\t" << "{\n"
-			<< "\t\t" << "Set" << str << "(FMath::Clamp(Get" << str << "()," << vAttributeMin.at(counter) << ".0f, " << vAttributeMax.at(counter) << ".0f));\n"
-			<< "\t\t" << str << "ChangeDelegate.Broadcast(Get" << str << "(), Data.EffectSpec.StackCount);\n"
-			<< "\t}\n";
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "\t" << "if (Data.EvaluatedData.Attribute == Get" << str << "Attribute())\n"
+				<< "\t" << "{\n"
+				<< "\t\t" << "Set" << str << "(FMath::Clamp(Get" << str << "(), " << vAttributeMin.at(counter) << ".0f, " << "GetMax" << str << "()));\n"
+				<< "\t\t" << str << "ChangeDelegate.Broadcast(Get" << str << "(), Data.EffectSpec.StackCount);\n"
+				<< "\t}\n";
+		}
+		else
+		{
+			fileStream << "\t" << "if (Data.EvaluatedData.Attribute == Get" << str << "Attribute())\n"
+				<< "\t" << "{\n"
+				<< "\t\t" << "Set" << str << "(FMath::Clamp(Get" << str << "(), " << vAttributeMin.at(counter) << ".0f, " << vAttributeMax.at(counter) << ".0f));\n"
+				<< "\t\t" << str << "ChangeDelegate.Broadcast(Get" << str << "(), Data.EffectSpec.StackCount);\n"
+				<< "\t}\n";
+		}
 		counter++;
 	}
 
 	fileStream << "}\n\n";
 }
 
+//FN: Make Replication functions used in GASAttribute.cpp file
 void writeLifeRepProp(std::ofstream& fileStream)
 {
+	int counter = 0;
+
 	fileStream << "void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const\n"
 		<< "{\n" << "\tSuper::GetLifetimeReplicatedProps(OutLifetimeProps);\n";
+
+	//Write Rep Conditional functions.  Make necessary changes if UseMaxValue is True
 	for (const std::string& str : vAttributeNames)
 	{
 		fileStream << "\t" << "DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, " << str << ", COND_None, REPNOTIFY_Always);\n";
+
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "\t" << "DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, Max" << str << ", COND_None, REPNOTIFY_Always);\n";
+		}
+
+		counter++;
 	}
 
 	fileStream << "}\n\n";
 }
 
+//FN: Make OnRep functions used in GASAttribute.cpp file
 void writeOnReps(std::ofstream& fileStream)
 {
+	int counter = 0;
+
+	//Write On_Rep functions.  Make necessary changes if UseMaxValue is True
 	for (const std::string& str : vAttributeNames)
 	{
 		fileStream << "void UGASAttributeSet::OnRep_" << str << "(const FGameplayAttributeData& Old" << str << ")\n{\n"
 			<< "\t" << "GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, " << str << ", Old" << str << ");\n"
 			<< "}\n";
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "void UGASAttributeSet::OnRep_Max" << str << "(const FGameplayAttributeData& OldMax" << str << ")\n{\n"
+				<< "\t" << "GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, Max" << str << ", OldMax" << str << ");\n"
+				<< "}\n";
+		}
+
+		counter++;
 	}
 }
 
+//FN: Write Attributes to GASAttribute.cpp file
 void writeAttrToCPP()
 {
-	//cout << "====In Write Attribute To CPP FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Modifying GASAttributeSet CPP File"));
 
+	//Open file and override content
 	std::ofstream fileStream;
 	fileStream.open(outAttrPathCPP, std::ios_base::trunc);
 
@@ -294,10 +418,12 @@ void writeAttrToCPP()
 	fileStream.close();
 }
 
+//FN: Make Event Delagtes used in GASCharacter.h
 void writeEventTriggers(std::ofstream& fileStream)
 {
 	fileStream << "\t//Native functions for Attribute Change Delagates. Using UFUNCTION() to expose to BP Side Link\n\n";
 
+	//Read Vector and construct line
 	for (const std::string& str : vAttributeNames)
 	{
 		fileStream << "\t" << "UFUNCTION()\n"
@@ -305,10 +431,12 @@ void writeEventTriggers(std::ofstream& fileStream)
 	}
 }
 
+//FN: Make Event Delegate Binds to BP side used in GASCharacter.h
 void writeEventBindsBP(std::ofstream& fileStream)
 {
 	fileStream << "\n\n\t//******Event that bind to native events and are implemented in BPs********\n\n";
 
+	//Read Vector and construct line
 	for (const std::string& str : vAttributeNames)
 	{
 		fileStream << "\t" << "//Event Trigger On " << str << " Change\n"
@@ -317,35 +445,47 @@ void writeEventBindsBP(std::ofstream& fileStream)
 	}
 }
 
+//FN: Make attribute Getters used in GASCharacter.h
 void writeGettersFN(std::ofstream& fileStream)
 {
 	fileStream << "\n\n\t//*******Ability Values Getter Functions**********\n\n";
+	int counter = 0;
 
+	//Read Vector and construct line
 	for (const std::string& str : vAttributeNames)
 	{
-		fileStream << "\t" << "//Getter for " << str << " Values\n"
-			<< "\t" << "UFUNCTION(BlueprintPure, Category = \"GASGameplayAbility\")\n"
-			<< "\t" << "void Get" << str << "Value(float& " << str << ");\n";
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "\t" << "//Getter for " << str << " Values\n"
+				<< "\t" << "UFUNCTION(BlueprintPure, Category = \"GASGameplayAbility\")\n"
+				<< "\t" << "void Get" << str << "Values(float& " << str << ", float& Max" << str << ");\n";
+		}
+		else
+		{
+			fileStream << "\t" << "//Getter for " << str << " Values\n"
+				<< "\t" << "UFUNCTION(BlueprintPure, Category = \"GASGameplayAbility\")\n"
+				<< "\t" << "void Get" << str << "Value(float& " << str << ");\n";
+		}
+
+		counter++;
 	}
 }
 
+//FN: Write changes GASCharacter.h
 void writeAttrToCharHeader()
 {
-	//cout << "====In Write to Char Header FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Modifying GASCharacter Header File"));
-
 
 	std::vector<std::string> fileBufferPre;
 
-	//read original file to buffer
+	//read original file to buffer and define variables for regex
 	std::ifstream fileStream(outCharPathHeader);
 	std::string lineBuffer = "";
 	bool breakFlag = false;
-
 	std::smatch match;
 	std::regex regexPattern("//==PATTERN==");
 
-
+	//Store non changed lines to buffer until a PATTERN is found
 	while (getline(fileStream, lineBuffer))
 	{
 		fileBufferPre.push_back(lineBuffer);
@@ -367,6 +507,7 @@ void writeAttrToCharHeader()
 
 	fileStream.close();
 
+	//Open file for write
 	std::ofstream fileStreamO(outCharPathHeader, std::ios_base::trunc);
 
 	for (const std::string& str : fileBufferPre)
@@ -374,7 +515,6 @@ void writeAttrToCharHeader()
 		fileStreamO << str << std::endl;
 	}
 
-	//write to CHar Header
 	writeEventTriggers(fileStreamO);
 	writeEventBindsBP(fileStreamO);
 	writeGettersFN(fileStreamO);
@@ -385,6 +525,7 @@ void writeAttrToCharHeader()
 
 }
 
+//FN: Make Constructor of GASCharacter.cpp file
 void writeCharConstructor(std::ofstream& fileStream)
 {
 	fileStream << "\n\n// Called when the game starts or when spawned\n"
@@ -403,6 +544,7 @@ void writeCharConstructor(std::ofstream& fileStream)
 	fileStream << "\t}\n" << "}\n\n";
 }
 
+//FN: Make Delagete Binds of GASCharacter.cpp file
 void writeCharBindFN(std::ofstream& fileStream)
 {
 
@@ -414,30 +556,45 @@ void writeCharBindFN(std::ofstream& fileStream)
 	}
 }
 
+//FN: Make Attribute Value Getter of GASCharacter.cpp file
 void writeCharGetterFN(std::ofstream& fileStream)
 {
+	int counter = 0;
+
 	for (const std::string& str : vAttributeNames)
 	{
-		fileStream << "void AGASCharacter::Get" << str << "Value(float& " << str << ")\n{\n"
-			<< "\t" << "if (AttributeSetVar)\n\t{\n"
-			<< "\t\t" << str << " = AttributeSetVar->Get" << str << "();\n"
-			<< "\t}\n}\n\n";
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "void AGASCharacter::Get" << str << "Values(float& " << str << ", float& Max" << str << ")\n{\n"
+				<< "\t" << "if (AttributeSetVar)\n\t{\n"
+				<< "\t\t" << str << " = AttributeSetVar->Get" << str << "();\n"
+				<< "\t\t" << "Max" << str << " = AttributeSetVar->GetMax" << str << "();\n"
+				<< "\t}\n}\n\n";
+		}
+		else
+		{
+			fileStream << "void AGASCharacter::Get" << str << "Value(float& " << str << ")\n{\n"
+				<< "\t" << "if (AttributeSetVar)\n\t{\n"
+				<< "\t\t" << str << " = AttributeSetVar->Get" << str << "();\n"
+				<< "\t}\n}\n\n";
+		}
+		
+		counter++;
 	}
 }
 
+//FN: Write changes GASCharacter.cpp
 void writeAttrToCharCPP()
 {
-	//cout << "====In Write to Char CPP FN====" << endl;
 	UE_LOG(LogTemp, Warning, TEXT("=====>Modifying GASCharacter CPP File"));
 
 	std::vector<std::string> fileBufferPre;
 	std::vector<std::string> fileBufferPost;
 
-	//read original file to buffer
+	//read original file to buffer  and declare variable for regex
 	std::ifstream fileStream(outCharPathCPP);
 	std::string lineBuffer = "";
 	bool breakFlag = false;
-
 	std::smatch match;
 	std::regex regexPattern("//==PATTERN==");
 	std::regex regexPatternStart("//==PATTERNSTART==");
@@ -446,7 +603,7 @@ void writeAttrToCharCPP()
 	std::regex Pattern = regexPatternStart;
 	bool patternSwitch = false;
 
-
+	//Read file in two sections. Both sections are separated by a PATTERN. These sections are not modified
 	while (getline(fileStream, lineBuffer))
 	{
 		fileBufferPre.push_back(lineBuffer);
@@ -470,7 +627,6 @@ void writeAttrToCharCPP()
 
 	while (getline(fileStream, lineBuffer))
 	{
-		//cout << lineBuffer << endl;
 		if (patternSwitch)
 		{
 			fileBufferPost.push_back(lineBuffer);
@@ -502,6 +658,7 @@ void writeAttrToCharCPP()
 
 	fileStream.close();
 
+	//Open file in WRITE mode and commit changes
 	std::ofstream fileStreamO(outCharPathCPP, std::ios_base::trunc);
 
 	for (const std::string& str : fileBufferPre)
@@ -595,10 +752,13 @@ void FGASAssociateHelperModule::PluginButtonClicked()
 	vAttributeNames.clear();
 	vAttributeMax.clear();
 	vAttributeMin.clear();
-
+	vUseMaxValueAttribute.clear();
+	
+	//Call FNs and start file modifications
 	fillAttributeName(fileBufferConfig);
 	fillAttributeMins(fileBufferConfig);
 	fillAttributeMax(fileBufferConfig);
+	fillAttributeBools(fileBufferConfig);
 	writeAttrToHeader();
 	writeAttrToCPP();
 	writeAttrToCharHeader();

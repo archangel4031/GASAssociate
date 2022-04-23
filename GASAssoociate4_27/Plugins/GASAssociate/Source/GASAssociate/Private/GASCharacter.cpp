@@ -34,6 +34,7 @@ void AGASCharacter::BeginPlay()
 		//Bindings for Attribute Change Delegates
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
+		const_cast<UGASAttributeSet*>(AttributeSetVar)->PlayerLevelChangeDelegate.AddDynamic(this, &AGASCharacter::OnPlayerLevelChangedNative);
 	}
 }
 
@@ -75,6 +76,22 @@ void AGASCharacter::InitializeAbilityMulti(TArray<TSubclassOf<UGameplayAbility>>
 	}
 }
 
+void AGASCharacter::Server_InitializeAbility_Implementation(TSubclassOf<UGameplayAbility> AbilityToGet, int32 AbilityLevel)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityToGet, AbilityLevel, 0));
+	}
+}
+
+void AGASCharacter::Server_InitializeAbilityMulti(TArray<TSubclassOf<UGameplayAbility>> AbilitiesToAcquire, int32 AbilityLevel)
+{
+	for (TSubclassOf<UGameplayAbility> AbilitItem : AbilitiesToAcquire)
+	{
+		Server_InitializeAbility(AbilitItem, AbilityLevel);
+	}
+}
+
 void AGASCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -90,38 +107,105 @@ void AGASCharacter::OnRep_PlayerState()
 
 void AGASCharacter::RemoveAbilityWithTags(FGameplayTagContainer TagContainer)
 {
-	TArray<FGameplayAbilitySpec*> MatchingAbilities;
-	AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbilities, true);
-	for (FGameplayAbilitySpec* Spec : MatchingAbilities)
+	if (AbilitySystemComponent)
 	{
-		AbilitySystemComponent->ClearAbility(Spec->Handle);
+		TArray<FGameplayAbilitySpec*> MatchingAbilities;
+		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbilities, true);
+		for (FGameplayAbilitySpec* Spec : MatchingAbilities)
+		{
+			AbilitySystemComponent->ClearAbility(Spec->Handle);
+		}
 	}
 }
 
 void AGASCharacter::ChangeAbilityLevelWithTags(FGameplayTagContainer TagContainer, int32 NewLevel)
 {
-	TArray<FGameplayAbilitySpec*> MatchingAbility;
-	AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbility, true);
-	for (FGameplayAbilitySpec* Spec : MatchingAbility)
+	if (AbilitySystemComponent)
 	{
-		Spec->Level = NewLevel;
+		TArray<FGameplayAbilitySpec*> MatchingAbility;
+		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbility, true);
+		for (FGameplayAbilitySpec* Spec : MatchingAbility)
+		{
+			Spec->Level = NewLevel;
+		}
 	}
 }
 
 void AGASCharacter::CancelAbilityWithTags(FGameplayTagContainer WithTags, FGameplayTagContainer WithoutTags)
 {
-	AbilitySystemComponent->CancelAbilities(&WithTags, &WithoutTags, nullptr);
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->CancelAbilities(&WithTags, &WithoutTags, nullptr);
+	}
 }
 
 void AGASCharacter::AddLooseGameplayTag(FGameplayTag TagToAdd)
 {
-	GetAbilitySystemComponent()->AddLooseGameplayTag(TagToAdd);
-	GetAbilitySystemComponent()->SetTagMapCount(TagToAdd, 1);
+	if (AbilitySystemComponent)
+	{
+		GetAbilitySystemComponent()->AddLooseGameplayTag(TagToAdd);
+		GetAbilitySystemComponent()->SetTagMapCount(TagToAdd, 1);
+	}
 }
 
 void AGASCharacter::RemoveLooseGameplayTags(FGameplayTag TagsToRemove)
 {
-	GetAbilitySystemComponent()->RemoveLooseGameplayTag(TagsToRemove);
+	if (AbilitySystemComponent)
+	{
+		GetAbilitySystemComponent()->RemoveLooseGameplayTag(TagsToRemove);
+	}
+}
+
+void AGASCharacter::Server_RemoveAbilityWithTags_Implementation(FGameplayTagContainer TagContainer)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		TArray<FGameplayAbilitySpec*> MatchingAbilities;
+		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbilities, true);
+		for (FGameplayAbilitySpec* Spec : MatchingAbilities)
+		{
+			AbilitySystemComponent->ClearAbility(Spec->Handle);
+		}
+	}
+}
+
+void AGASCharacter::Server_ChangeAbilityLevelWithTags_Implementation(FGameplayTagContainer TagContainer, int32 NewLevel)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		TArray<FGameplayAbilitySpec*> MatchingAbility;
+		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(TagContainer, MatchingAbility, true);
+		for (FGameplayAbilitySpec* Spec : MatchingAbility)
+		{
+			Spec->Level = NewLevel;
+			AbilitySystemComponent->MarkAbilitySpecDirty(*Spec, false);
+		}
+	}
+}
+
+void AGASCharacter::Server_CancelAbilityWithTags_Implementation(FGameplayTagContainer WithTags, FGameplayTagContainer WithoutTags)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		AbilitySystemComponent->CancelAbilities(&WithTags, &WithoutTags, nullptr);
+	}
+}
+
+void AGASCharacter::Server_AddLooseGameplayTag_Implementation(FGameplayTag TagToAdd)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		GetAbilitySystemComponent()->AddLooseGameplayTag(TagToAdd);
+		GetAbilitySystemComponent()->SetTagMapCount(TagToAdd, 1);
+	}
+}
+
+void AGASCharacter::Server_RemoveLooseGameplayTags_Implementation(FGameplayTag TagsToRemove)
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+		GetAbilitySystemComponent()->RemoveLooseGameplayTag(TagsToRemove);
+	}
 }
 
 //==PATTERNSTOP==
@@ -135,19 +219,34 @@ void AGASCharacter::OnManaChangedNative(float Mana, int32 StackCount)
 	OnManaChange(Mana, StackCount);
 }
 
-void AGASCharacter::GetHealthValue(float& Health)
+void AGASCharacter::OnPlayerLevelChangedNative(float PlayerLevel, int32 StackCount)
+{
+	OnPlayerLevelChange(PlayerLevel, StackCount);
+}
+
+void AGASCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
 	if (AttributeSetVar)
 	{
 		Health = AttributeSetVar->GetHealth();
+		MaxHealth = AttributeSetVar->GetMaxHealth();
 	}
 }
 
-void AGASCharacter::GetManaValue(float& Mana)
+void AGASCharacter::GetManaValues(float& Mana, float& MaxMana)
 {
 	if (AttributeSetVar)
 	{
 		Mana = AttributeSetVar->GetMana();
+		MaxMana = AttributeSetVar->GetMaxMana();
+	}
+}
+
+void AGASCharacter::GetPlayerLevelValue(float& PlayerLevel)
+{
+	if (AttributeSetVar)
+	{
+		PlayerLevel = AttributeSetVar->GetPlayerLevel();
 	}
 }
 
