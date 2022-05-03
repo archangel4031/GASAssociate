@@ -24,11 +24,6 @@ void UGASAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMod
 		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
 		ManaChangeDelegate.Broadcast(GetMana(), Data.EffectSpec.StackCount);
 	}
-	if (Data.EvaluatedData.Attribute == GetPlayerLevelAttribute())
-	{
-		SetPlayerLevel(FMath::Clamp(GetPlayerLevel(), 0.0f, 99.0f));
-		PlayerLevelChangeDelegate.Broadcast(GetPlayerLevel(), Data.EffectSpec.StackCount);
-	}
 }
 
 void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -38,7 +33,6 @@ void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, PlayerLevel, COND_None, REPNOTIFY_Always);
 }
 
 void UGASAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -56,8 +50,4 @@ void UGASAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana)
 void UGASAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, MaxMana, OldMaxMana);
-}
-void UGASAttributeSet::OnRep_PlayerLevel(const FGameplayAttributeData& OldPlayerLevel)
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, PlayerLevel, OldPlayerLevel);
 }

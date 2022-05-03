@@ -4,6 +4,8 @@
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
 
+    Current Version Ver 1.2.0
+
 ### Information:
 
 The plugin contains all the necessary C++ files required to make Gameplay Ability System work. There is already my tutorial series on using Gameplay Ability System, [you can find it here](https://www.youtube.com/playlist?list=PLeEXbS_TaXrAbfoPYSNROqe1fDQfQHTfo). The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
@@ -35,6 +37,9 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
+ - Ver 1.2.0
+	 - Added Get Ability Info Function in GAS Gameplay Ability. Now you can retrieve information about Ability Cost and Cooldown using this function. (Currently only Modifier based Cost is supported)
+	 - Added a separate [**Release**](https://github.com/archangel4031/GASAssociate/releases) for Ver 1.2.0
  - Ver 1.1.0
 	 - Added an option to automatically create a Max Value Attribute to handle clamping (see Example Project)
 	 - Added Server Only functions that only execute as server. Generic versions of functions still exists and may be useful in some cases

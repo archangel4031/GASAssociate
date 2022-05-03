@@ -34,7 +34,6 @@ void AGASCharacter::BeginPlay()
 		//Bindings for Attribute Change Delegates
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
-		const_cast<UGASAttributeSet*>(AttributeSetVar)->PlayerLevelChangeDelegate.AddDynamic(this, &AGASCharacter::OnPlayerLevelChangedNative);
 	}
 }
 
@@ -178,7 +177,6 @@ void AGASCharacter::Server_ChangeAbilityLevelWithTags_Implementation(FGameplayTa
 		for (FGameplayAbilitySpec* Spec : MatchingAbility)
 		{
 			Spec->Level = NewLevel;
-			AbilitySystemComponent->MarkAbilitySpecDirty(*Spec, false);
 		}
 	}
 }
@@ -219,11 +217,6 @@ void AGASCharacter::OnManaChangedNative(float Mana, int32 StackCount)
 	OnManaChange(Mana, StackCount);
 }
 
-void AGASCharacter::OnPlayerLevelChangedNative(float PlayerLevel, int32 StackCount)
-{
-	OnPlayerLevelChange(PlayerLevel, StackCount);
-}
-
 void AGASCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
 	if (AttributeSetVar)
@@ -239,14 +232,6 @@ void AGASCharacter::GetManaValues(float& Mana, float& MaxMana)
 	{
 		Mana = AttributeSetVar->GetMana();
 		MaxMana = AttributeSetVar->GetMaxMana();
-	}
-}
-
-void AGASCharacter::GetPlayerLevelValue(float& PlayerLevel)
-{
-	if (AttributeSetVar)
-	{
-		PlayerLevel = AttributeSetVar->GetPlayerLevel();
 	}
 }
 
