@@ -56,9 +56,15 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, MaxMana)
 
+	//Attribute for AttackPower
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes", ReplicatedUsing = OnRep_AttackPower)
+	FGameplayAttributeData AttackPower;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, AttackPower)
+
 	//Delegates for attribute changes
 	FAttrChangeDelegate HealthChangeDelegate;
 	FAttrChangeDelegate ManaChangeDelegate;
+	FAttrChangeDelegate AttackPowerChangeDelegate;
 	//Replication Functions for Attributes
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
@@ -68,5 +74,7 @@ public:
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
+	UFUNCTION()
+	virtual void OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower);
 
 };

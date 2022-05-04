@@ -34,6 +34,7 @@ void AGASCharacter::BeginPlay()
 		//Bindings for Attribute Change Delegates
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
 		const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
+		const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
 	}
 }
 
@@ -69,9 +70,9 @@ void AGASCharacter::InitializeAbility(TSubclassOf<UGameplayAbility> AbilityToGet
 
 void AGASCharacter::InitializeAbilityMulti(TArray<TSubclassOf<UGameplayAbility>> AbilitiesToAcquire, int32 AbilityLevel)
 {
-	for (TSubclassOf<UGameplayAbility> AbilitItem : AbilitiesToAcquire)
+	for (TSubclassOf<UGameplayAbility> AbilityItem : AbilitiesToAcquire)
 	{
-		InitializeAbility(AbilitItem, AbilityLevel);
+		InitializeAbility(AbilityItem, AbilityLevel);
 	}
 }
 
@@ -85,9 +86,67 @@ void AGASCharacter::Server_InitializeAbility_Implementation(TSubclassOf<UGamepla
 
 void AGASCharacter::Server_InitializeAbilityMulti(TArray<TSubclassOf<UGameplayAbility>> AbilitiesToAcquire, int32 AbilityLevel)
 {
-	for (TSubclassOf<UGameplayAbility> AbilitItem : AbilitiesToAcquire)
+	for (TSubclassOf<UGameplayAbility> AbilityItem : AbilitiesToAcquire)
 	{
-		Server_InitializeAbility(AbilitItem, AbilityLevel);
+		Server_InitializeAbility(AbilityItem, AbilityLevel);
+	}
+}
+
+FGameplayAbilityInfo AGASCharacter::GetAbilityInfoFromAbilityClass(TSubclassOf<UGameplayAbility> AbilityClass, int32 AtAbilityLevel)
+{
+	//Create a default GA Class Object to retrieve info
+	UGameplayAbility* AbilityCDO = AbilityClass.GetDefaultObject();
+	
+	if (AbilityCDO)
+	{
+		//Store Cost and Cooldown GE Classes in Variables
+		UGameplayEffect* CooldownEffect = AbilityCDO->GetCooldownGameplayEffect();
+		UGameplayEffect* CostEffect = AbilityCDO->GetCostGameplayEffect();
+		
+		//Proceed only if we have valid Cost and Cooldown Classes
+		if (CostEffect && CooldownEffect)
+		{
+			//Create variables to store info
+			float CooldownDuration = 0;
+			TArray<float> Cost;
+			TArray<FString> CostName;
+			//Theses variables are needed as temp variables to add to TArray
+			float SingleCost = 0.0f;
+			FString SingleCostName;
+
+			//Initialize the TArray as Empty Arrays
+			Cost.Empty();
+			CostName.Empty();
+
+			//Get the Cooldown Duration Magnitude from GE
+			CooldownEffect->DurationMagnitude.GetStaticMagnitudeIfPossible(AtAbilityLevel, CooldownDuration);
+
+			//If we have atleast one modifier for Cost GE (I'm only dealing with Modifiers, not other types like Exec Calculations etc.)
+			if (CostEffect->Modifiers.Num() > 0)
+			{
+				//Iterate over Modifier Array and add to TArray
+				for (auto EffectInfo : CostEffect->Modifiers)
+				{
+					EffectInfo.ModifierMagnitude.GetStaticMagnitudeIfPossible(AtAbilityLevel, SingleCost);
+					FGameplayAttribute CostAttribute = EffectInfo.Attribute;
+					SingleCostName = CostAttribute.AttributeName;
+					Cost.Add(SingleCost);
+					CostName.Add(SingleCostName);
+
+				}
+			}
+			return FGameplayAbilityInfo(CooldownDuration, Cost, CostName);
+		}
+		else
+		{
+			//Return Empty if Invalid
+			return FGameplayAbilityInfo();
+		}
+	}
+	else
+	{
+		//Return Empty if Invalid
+		return FGameplayAbilityInfo();
 	}
 }
 
@@ -217,6 +276,11 @@ void AGASCharacter::OnManaChangedNative(float Mana, int32 StackCount)
 	OnManaChange(Mana, StackCount);
 }
 
+void AGASCharacter::OnAttackPowerChangedNative(float AttackPower, int32 StackCount)
+{
+	OnAttackPowerChange(AttackPower, StackCount);
+}
+
 void AGASCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
 	if (AttributeSetVar)
@@ -232,6 +296,14 @@ void AGASCharacter::GetManaValues(float& Mana, float& MaxMana)
 	{
 		Mana = AttributeSetVar->GetMana();
 		MaxMana = AttributeSetVar->GetMaxMana();
+	}
+}
+
+void AGASCharacter::GetAttackPowerValue(float& AttackPower)
+{
+	if (AttributeSetVar)
+	{
+		AttackPower = AttributeSetVar->GetAttackPower();
 	}
 }
 
