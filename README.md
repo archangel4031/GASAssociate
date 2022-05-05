@@ -4,7 +4,7 @@
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
 
-    Current Version Ver 1.2.1
+    Current Version Ver 1.2.0
 
 ### Information:
 
@@ -31,6 +31,7 @@ The plugin contains all the necessary C++ files required to make Gameplay Abilit
 
  - See linked video for further information on the capabilities of the plugin
  - The Plugin does not have *Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets without spaces
+ - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [Issues](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
  
 ### Video:
 Refer to the video for more information. (Ver 1.0.0)
