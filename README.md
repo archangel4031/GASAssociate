@@ -4,7 +4,7 @@
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
 
-    Current Version Ver 1.2.0
+    Current Version Ver 1.2.2
 
 ### Information:
 
@@ -39,6 +39,9 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
+ - Ver 1.2.2
+	 - Added an option to select Replication Mode for Ability System Component in Attribute Helper Wizard. Now you can use Full mode for single player games
+	 - Default Replication Mode is set to ***Full***
  - Ver 1.2.1
 	 - Added Get Ability Info Function in Character Class as well. Now you can get GA Class info in Character Class to update UI Elements
 	 - Fixed spelling mistake in GAS Character Class

@@ -36,6 +36,7 @@ std::vector<std::string> vAttributeNames = {};
 std::vector<int> vAttributeMin = {};
 std::vector<int> vAttributeMax = {};
 std::vector<bool> vUseMaxValueAttribute = {};
+std::string vRepMode = "";
 
 //FN: open and store Config file in buffer
 std::string openFile(std::string inFilePath)
@@ -212,6 +213,43 @@ void fillAttributeBools(std::string inString)
 				vUseMaxValueAttribute.push_back(false);
 			}
 			
+			break;
+		}
+	}
+}
+
+//FN: Fill Attributes Rep Mode of Attributes from Config File
+void fillAttributeRepMode(std::string inString)
+{
+	UE_LOG(LogTemp, Warning, TEXT("=====>Filling Attributes Rep Mode"));
+
+	//Declare Variabeles for regex pattern matching
+	std::smatch match;
+	std::regex regexAttributeName("AttributeRepMode=[a-zA-Z]+");
+	std::string tempAttrName;
+	std::string bufferLine = "";
+	size_t StartPos = 17;
+	size_t EndPos = 0;
+
+	//Read Config Buffer line-by-line
+	std::istringstream inStringStream(inString);
+
+	//Iterate through line and search for pattern.
+	while (getline(inStringStream, bufferLine))
+	{
+		//This While Loop can be replaced I think, but all examples on internet use this so...
+		while (regex_search(bufferLine, match, regexAttributeName))
+		{
+			//Store in temp Variable
+			for (auto x : match)
+			{
+				tempAttrName = x;
+			}
+
+			//Trim the temp String to get Rep Mode only
+			EndPos = tempAttrName.length();
+			tempAttrName = tempAttrName.substr(StartPos, EndPos);
+			vRepMode = tempAttrName;
 			break;
 		}
 	}
@@ -525,7 +563,28 @@ void writeAttrToCharHeader()
 
 }
 
-//FN: Make Constructor of GASCharacter.cpp file
+// FN: Make rest of Constructor of GASCharacter.cpp file
+void writeCharRepMode(std::ofstream & fileStream)
+{
+	if (vRepMode == "Full")
+	{
+		fileStream << "\n\tAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);";
+	}
+	else if (vRepMode == "Mixed")
+	{
+		fileStream << "\n\tAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);";
+	}
+	else if (vRepMode == "Minimal")
+	{
+		fileStream << "\n\tAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);";
+	}
+	
+
+	fileStream << "\n\n}\n";
+}
+
+
+//FN: Make BeginPlay of GASCharacter.cpp file
 void writeCharConstructor(std::ofstream& fileStream)
 {
 	fileStream << "\n\n// Called when the game starts or when spawned\n"
@@ -666,6 +725,7 @@ void writeAttrToCharCPP()
 		fileStreamO << str << std::endl;
 	}
 
+	writeCharRepMode(fileStreamO);
 	writeCharConstructor(fileStreamO);
 
 	fileStreamO << "//==PATTERNSTART==\n";
@@ -674,6 +734,7 @@ void writeAttrToCharCPP()
 	{
 		fileStreamO << str << std::endl;
 	}
+
 
 	writeCharBindFN(fileStreamO);
 	writeCharGetterFN(fileStreamO);
@@ -759,6 +820,7 @@ void FGASAssociateHelperModule::PluginButtonClicked()
 	fillAttributeMins(fileBufferConfig);
 	fillAttributeMax(fileBufferConfig);
 	fillAttributeBools(fileBufferConfig);
+	fillAttributeRepMode(fileBufferConfig);
 	writeAttrToHeader();
 	writeAttrToCPP();
 	writeAttrToCharHeader();

@@ -13,12 +13,14 @@ AGASCharacter::AGASCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>("AbilitySystemComp");
 	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);	//Options available are Full, Minimal, Mixed (Mixed is used for easier implementation of Gameplay Cues for replication via Gameplay Effect)
+	//Options for SetReplicationMode available are Full, Minimal, Mixed (Mixed is used for easier implementation of Gameplay Cues for replication via Gameplay Effect)
 	//For handling Gameplay Cues locally, See GASAbilitySystemComponent.h file's comments
 
-}
-
 //==PATTERN==
+
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
+
+}
 
 
 // Called when the game starts or when spawned

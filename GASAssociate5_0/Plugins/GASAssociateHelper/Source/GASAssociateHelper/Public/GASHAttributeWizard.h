@@ -9,6 +9,13 @@
 /**
  * 
  */
+UENUM()
+enum class RepMode : uint8
+{
+	Full,
+	Mixed,
+	Minimal
+};
 
 USTRUCT()
 struct FAttributeSettings
@@ -36,6 +43,9 @@ class GASASSOCIATEHELPER_API UGASHAttributeWizard : public UObject
 
 public:
 	UGASHAttributeWizard(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(config, EditAnywhere, Category = CustomAttributes)
+	RepMode AttributeRepMode;
 
 	UPROPERTY(config, EditAnywhere, Category = CustomAttributes)
 	TArray<FAttributeSettings> AttributeList;
