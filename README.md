@@ -8,7 +8,12 @@ This is the source code for for the Plugin GAS Associate, that is supposed to ma
 
 ### Information:
 
-The plugin contains all the necessary C++ files required to make Gameplay Ability System work. There is already my tutorial series on using Gameplay Ability System, [you can find it here](https://www.youtube.com/playlist?list=PLeEXbS_TaXrAbfoPYSNROqe1fDQfQHTfo). The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
+The plugin contains all the necessary C++ files required to make Gameplay Ability System work. This plugin allows you to jump quickly into GAS without needing to manually create each and every C++ file. I have already created tutorial series on using Gameplay Ability System with Blueprints. I highly recommend you watch the tutorial series to get familiar with Gameplay Ability System. The tutorial series also cover C++ explanations that are easy to understand even for non-programmers.
+
+ - [UE4 Gameplay Ability System Practical Example](https://www.youtube.com/playlist?list=PLeEXbS_TaXrAbfoPYSNROqe1fDQfQHTfo)
+ - [UE4 Gameplay Ability System for Blueprint Programmers](https://www.youtube.com/playlist?list=PLeEXbS_TaXrDlqQv753CpKqDlpNXixFMg)
+
+The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 
 ### How to Use
 ###### Use Template Blank Project

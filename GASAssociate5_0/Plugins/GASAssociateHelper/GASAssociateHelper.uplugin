@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0",
+	"VersionName": "1.2.2",
 	"FriendlyName": "GASAssociateHelper",
 	"Description": "Helper to autofill Attributes",
 	"Category": "Other",
@@ -18,5 +18,7 @@
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}
-	]
+	],
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false
 }
