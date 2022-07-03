@@ -4,7 +4,8 @@
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
 
-    Current Version Ver 1.2.2
+    Current Version Ver 1.3.0
+    Updated on 3-Jul-2022
 
 ### Information:
 
@@ -36,7 +37,11 @@ The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 
  - See linked video for further information on the capabilities of the plugin
  - The Plugin does not have *Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets without spaces
- - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [Issues](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
+ 
+ **Known Issues**
+ - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [this issue](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
+ - Error handling for Attribute Naming is missing. Engine will crash if DefaultGASAttribute.ini file is missing and GAS Associate Helper is used
+ - Error Handling of empty Initial Attribute Data is missing. Engine will crash if Attribute Test Data on Ability System Component is not set correctly or left empty
  
 ### Video:
 Refer to the video for more information. (Ver 1.0.0)
@@ -44,6 +49,9 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
+ - Ver 1.3.0
+	 - Added a proper Target Actor for ground trace. This Target Actor is based of built in Ground Trace Target Actor Class
+	 - Removed support for UE4. The UE4 will now exist on *legacy* branch
  - Ver 1.2.2
 	 - Added an option to select Replication Mode for Ability System Component in Attribute Helper Wizard. Now you can use Full mode for single player games
 	 - Default Replication Mode is set to ***Full***
