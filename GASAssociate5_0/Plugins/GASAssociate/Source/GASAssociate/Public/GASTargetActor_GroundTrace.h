@@ -3,38 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbilityTargetActor.h"
-#include "GASTargetActor.generated.h"
+#include "Abilities/GameplayAbilityTargetActor_GroundTrace.h"
+#include "GASTargetActor_GroundTrace.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GASASSOCIATE_API AGASTargetActor : public AGameplayAbilityTargetActor
+class GASASSOCIATE_API AGASTargetActor_GroundTrace : public AGameplayAbilityTargetActor_GroundTrace
 {
 	GENERATED_BODY()
 
 public:
-
-	AGASTargetActor();
+	AGASTargetActor_GroundTrace();
 
 	virtual void Tick(float DeltaSeconds) override;
 
 	AGameplayAbilityWorldReticle* MyReticleActor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true), Category = "GASGameplayAbility")
-	float TraceRange;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GASGameplayAbility")
 	FHitResult TraceHitResults;
 
-	bool LineTraceFN(FHitResult& TraceHitResult);
-
-	virtual void StartTargeting(UGameplayAbility* Ability) override;
 	virtual void ConfirmTargetingAndContinue() override;
 	virtual void CancelTargeting() override;
 
 	virtual AGameplayAbilityWorldReticle* SpawnReticleActor(FVector Location, FRotator Rotation);
 	virtual void DestroyReticleActors();
 
+	
 };
