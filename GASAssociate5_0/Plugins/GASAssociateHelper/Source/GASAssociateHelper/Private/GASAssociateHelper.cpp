@@ -24,7 +24,7 @@ FString PluginDir = FPaths::ProjectPluginsDir();
 std::string const BaseConfigPath = TCHAR_TO_UTF8(*ConfigDir);
 std::string const BasePluginPath = TCHAR_TO_UTF8(*PluginDir);
 
-//Make Path to be used for reading and writing files
+//Build Path to be used for reading and writing files
 std::string configFilePath = BaseConfigPath + "DefaultGASAttributes.ini";
 std::string outAttrPathHeader = BasePluginPath + "GASAssociate/Source/GASAssociate/Public/GASAttributeSet.h";
 std::string outAttrPathCPP = BasePluginPath + "GASAssociate/Source/GASAssociate/Private/GASAttributeSet.cpp";
@@ -37,6 +37,19 @@ std::vector<int> vAttributeMin = {};
 std::vector<int> vAttributeMax = {};
 std::vector<bool> vUseMaxValueAttribute = {};
 std::string vRepMode = "";
+
+//FN: Create a default DefaultGASAttributes.ini file in case the file does not exist (this will be handled in try-catch)
+void makeDefaultFile(std::string inFilePath)
+{
+
+	//Open file in WRITE mode to output chanegs
+	std::ofstream fileStreamO(inFilePath, std::ios_base::out);
+
+	//Create a default Attribute of Health and Max Health
+	fileStreamO << "[/Script/GASAssociateHelper.GASHAttributeWizard]" << std::endl;
+	fileStreamO << "+ AttributeList = (AttributeName = \"Health\", MinValue = 0, MaxValue = 100, UseMaxValueAttribute = True)" << std::endl;
+	fileStreamO << "AttributeRepMode = Full" << std::endl;
+}
 
 //FN: open and store Config file in buffer
 std::string openFile(std::string inFilePath)
@@ -63,7 +76,7 @@ void fillAttributeName(std::string inString)
 
 	//Declare Variabeles for regex pattern matching
 	std::smatch match;
-	std::regex regexAttributeName("AttributeName=[\"a-zA-Z\"]+");
+	std::regex regexAttributeName("AttributeName=\"[a-zA-Z_][a-zA-Z0-9]+\"");
 	std::string tempAttrName;
 	std::string bufferLine = "";
 	size_t StartPos = 0;
@@ -788,11 +801,12 @@ void FGASAssociateHelperModule::ShutdownModule()
 	}
 }
 
+// ************************************************ This is called on button press ************************************************
 void FGASAssociateHelperModule::PluginButtonClicked()
 {
 	// Put your "OnButtonClicked" stuff here
 	FText DialogText = FText::FText::Format(
-		LOCTEXT("PluginButtonDialogText", "Files will be modified after you close this window, Compile to commit changes! FileSet: {0}, {1}"),
+		LOCTEXT("PluginButtonDialogText", "Files will be modified after you close this window, Compile to commit changes!\nSee Output Log for Details\nFileSet: {0}, {1}"),
 		FText::FromString(TEXT("GASAttributeSet")),
 		FText::FromString(TEXT("GASCharacter"))
 	);
@@ -806,26 +820,36 @@ void FGASAssociateHelperModule::PluginButtonClicked()
 	UE_LOG(LogTemp, Warning, TEXT("Character Header file path: %s"), UTF8_TO_TCHAR(outCharPathHeader.c_str()));
 	UE_LOG(LogTemp, Warning, TEXT("Character CPP file path: %s"), UTF8_TO_TCHAR(outCharPathCPP.c_str()));
 	
-	UE_LOG(LogTemp, Warning, TEXT("=====>Opeing .ini File"));
-	std::string fileBufferConfig = openFile(configFilePath);
+	try
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=====>Opeing .ini File"));
+		std::string fileBufferConfig = openFile(configFilePath);
 
-	UE_LOG(LogTemp, Warning, TEXT("=====>Clearing Previous Array Data"));
-	vAttributeNames.clear();
-	vAttributeMax.clear();
-	vAttributeMin.clear();
-	vUseMaxValueAttribute.clear();
-	
-	//Call FNs and start file modifications
-	fillAttributeName(fileBufferConfig);
-	fillAttributeMins(fileBufferConfig);
-	fillAttributeMax(fileBufferConfig);
-	fillAttributeBools(fileBufferConfig);
-	fillAttributeRepMode(fileBufferConfig);
-	writeAttrToHeader();
-	writeAttrToCPP();
-	writeAttrToCharHeader();
-	writeAttrToCharCPP();
-	UE_LOG(LogTemp, Warning, TEXT("=====>Files Modified<====="));
+		UE_LOG(LogTemp, Warning, TEXT("=====>Clearing Previous Array Data"));
+		vAttributeNames.clear();
+		vAttributeMax.clear();
+		vAttributeMin.clear();
+		vUseMaxValueAttribute.clear();
+
+		//Call FNs and start file modifications
+		fillAttributeName(fileBufferConfig);
+		fillAttributeMins(fileBufferConfig);
+		fillAttributeMax(fileBufferConfig);
+		fillAttributeBools(fileBufferConfig);
+		fillAttributeRepMode(fileBufferConfig);
+		writeAttrToHeader();
+		writeAttrToCPP();
+		writeAttrToCharHeader();
+		writeAttrToCharCPP();
+		UE_LOG(LogTemp, Warning, TEXT("=====>Files Modified<====="));
+	}
+
+	catch(...)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("=====>Failed to open config file. Add some attributes and try again."));
+		makeDefaultFile(configFilePath);
+		UE_LOG(LogTemp, Warning, TEXT("=====>Added Default Attributes of Health and Max Health"));
+	}
 }
 
 void FGASAssociateHelperModule::RegisterMenus()

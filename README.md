@@ -1,11 +1,17 @@
 # GASAssociate
 
+[![Discord](https://img.shields.io/discord/820665024137789472?label=discord)](https://discord.gg/nfkTafPJKK)
+[![GitHub last commit](https://img.shields.io/github/last-commit/archangel4031/GASAssociate?color=%237d0096)](https://github.com/archangel4031/GASAssociate)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/archangel4031/GASAssociate?color=%23ad0000&label=latest%20release)](https://github.com/archangel4031/GASAssociate/releases)
+[![GitHub repo size](https://img.shields.io/github/repo-size/archangel4031/GASAssociate)](https://github.com/archangel4031/GASAssociate)
+[![GitHub forks](https://img.shields.io/github/forks/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/network/members)
+[![GitHub Repo stars](https://img.shields.io/github/stars/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/stargazers)
+
+## Beta branch! Use at your own risk!
+
 ### Description:
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
-
-    Current Version Ver 1.3.0
-    Updated on 3-Jul-2022
 
 ### Information:
 
@@ -49,6 +55,10 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
+ - Ver 1.3.0-devtesting
+	 - Added error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
+	 - Added error handling for empty DefaultGASAttributes.ini file. In case of any error reading the file, plugin will auto add a default attribute of Health and Max Health
+	 - Added separate branch for in-development version for public testing (beta version of plugin will go in *[devtesting](https://github.com/archangel4031/GASAssociate/branches)* branch)
  - Ver 1.3.0
 	 - Added a proper Target Actor for ground trace. This Target Actor is based of built in Ground Trace Target Actor Class
 	 - Removed support for UE4. The UE4 will now exist on *[legacy](https://github.com/archangel4031/GASAssociate/tree/legacyUE4UE5)* branch
