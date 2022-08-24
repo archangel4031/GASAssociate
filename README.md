@@ -7,11 +7,10 @@
 [![GitHub forks](https://img.shields.io/github/forks/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/network/members)
 [![GitHub Repo stars](https://img.shields.io/github/stars/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/stargazers)
 
-## Beta branch! Use at your own risk!
-
 ### Description:
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
+
 
 ### Information:
 
@@ -53,12 +52,10 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
- - Ver 1.4.1-devtesting
-	 - Improved error handling for Attribute Names
-	 - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
- - Ver 1.3.0-devtesting
-	 - Added error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
-	 - Added error handling for empty DefaultGASAttributes.ini file. In case of any error reading the file, plugin will auto add a default attribute of Health and Max Health
+ - Ver 1.4.1
+	 - Improved error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
+     - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
+ - Ver 1.3.0 (cosmetic fixes)
 	 - Added separate branch for in-development version for public testing (beta version of plugin will go in *[devtesting](https://github.com/archangel4031/GASAssociate/branches)* branch)
  - Ver 1.3.0
 	 - Added a proper Target Actor for ground trace. This Target Actor is based of built in Ground Trace Target Actor Class
