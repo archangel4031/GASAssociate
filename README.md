@@ -7,11 +7,10 @@
 [![GitHub forks](https://img.shields.io/github/forks/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/network/members)
 [![GitHub Repo stars](https://img.shields.io/github/stars/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/stargazers)
 
-## Beta branch! Use at your own risk!
-
 ### Description:
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
+
 
 ### Information:
 
@@ -20,7 +19,8 @@ The plugin contains all the necessary C++ files required to make Gameplay Abilit
  - [UE4 Gameplay Ability System Practical Example](https://www.youtube.com/playlist?list=PLeEXbS_TaXrAbfoPYSNROqe1fDQfQHTfo)
  - [UE4 Gameplay Ability System for Blueprint Programmers](https://www.youtube.com/playlist?list=PLeEXbS_TaXrDlqQv753CpKqDlpNXixFMg)
 
-The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
+The repo contains blank C++ based projects for Unreal 5.0
+*Unreal 4.27 project is out of support and moved to [legacy](https://github.com/archangel4031/GASAssociate/tree/legacyUE4UE5) branch*
 
 ### How to Use
 ###### Use Template Blank Project
@@ -42,24 +42,27 @@ The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 **NOTES:** 
 
  - See linked video for further information on the capabilities of the plugin
- - The Plugin does not have *Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets without spaces
+ - The Plugin has *Basic Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets and numbers without spaces. Name may not begin with a number. The plugin will ignore such Attribute Names.
+ - Beta development is done in *[devtesting](https://github.com/archangel4031/GASAssociate/tree/devtesting)* branch. If you are a programmer, contribute code for development and improvement of this plugin!
  
  **Known Issues**
  - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [this issue](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
  
 ### Video:
-Refer to the video for more information. (Ver 1.0.0)
+Refer to the video for more information. (Video made for Plugin Ver 1.0.0)
 [GAS Associate | A plugin for Unreal Engine 5 and Unreal Engine 4](https://youtu.be/ett9ZTHYN8g)
 
 #### Update Log
 
- - Ver 1.4.1-devtesting
-	 - Improved error handling for Attribute Names
-	 - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
- - Ver 1.3.0-devtesting
-	 - Added error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
-	 - Added error handling for empty DefaultGASAttributes.ini file. In case of any error reading the file, plugin will auto add a default attribute of Health and Max Health
-	 - Added separate branch for in-development version for public testing (beta version of plugin will go in *[devtesting](https://github.com/archangel4031/GASAssociate/branches)* branch)
+  - Ver 1.5.0
+     - Added functions for setting Attribute Values directly from Character Class. These can be used to initialize Attributes from Save File for example.
+     - Updated GAS Associate Helper to create Setter functions for changing Attributes directly. Now GAS Associate Helper will also create these Setter functions for each Attribute
+     - Updated README.md
+ - Ver 1.4.1
+	 - Improved error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
+     - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
+ - Ver 1.3.0 (cosmetic fixes)
+	 - Added separate branch for in-development version for public testing (beta version of plugin will go in *[devtesting](https://github.com/archangel4031/GASAssociate/tree/devtesting)* branch)
  - Ver 1.3.0
 	 - Added a proper Target Actor for ground trace. This Target Actor is based of built in Ground Trace Target Actor Class
 	 - Removed support for UE4. The UE4 will now exist on *[legacy](https://github.com/archangel4031/GASAssociate/tree/legacyUE4UE5)* branch

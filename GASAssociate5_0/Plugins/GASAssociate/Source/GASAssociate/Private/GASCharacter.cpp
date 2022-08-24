@@ -29,17 +29,14 @@ void AGASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	if (AbilitySystemComponent)
-	{
-		if (AbilitySystemComponent->DefaultStartingData.Num() > 0 && AbilitySystemComponent->DefaultStartingData[0].Attributes != NULL && AbilitySystemComponent->DefaultStartingData[0].DefaultStartingTable != NULL)
-		{
-			//Link Attribute Set to Ability System Component
-			AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();
+{
+		//Link Attribute Set to Ability System Component
+		AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();
 
-			//Bindings for Attribute Change Delegates
-			const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
-			const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
-			const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
-		}
+		//Bindings for Attribute Change Delegates
+		const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
+		const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
+		const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
 	}
 }
 
