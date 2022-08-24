@@ -29,8 +29,7 @@ void AGASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	if (AbilitySystemComponent)
-{
-		// Check if we do not have an Empty Default Starting Data Table
+	{
 		if (AbilitySystemComponent->DefaultStartingData.Num() > 0 && AbilitySystemComponent->DefaultStartingData[0].Attributes != NULL && AbilitySystemComponent->DefaultStartingData[0].DefaultStartingTable != NULL)
 		{
 			//Link Attribute Set to Ability System Component
@@ -40,10 +39,6 @@ void AGASCharacter::BeginPlay()
 			const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
 			const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
 			const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to initialize Attribute Set. Empty Starting Data!"));
 		}
 	}
 }

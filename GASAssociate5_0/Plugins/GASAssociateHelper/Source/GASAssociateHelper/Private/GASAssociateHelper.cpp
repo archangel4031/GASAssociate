@@ -76,7 +76,7 @@ void fillAttributeName(std::string inString)
 
 	//Declare Variabeles for regex pattern matching
 	std::smatch match;
-	std::regex regexAttributeName("AttributeName=\"[a-zA-Z_][a-zA-Z0-9]+\"");
+	std::regex regexAttributeName("AttributeName=\"[a-zA-Z][a-zA-Z0-9]+\"");			// The first character must be an aplhabet
 	std::string tempAttrName;
 	std::string bufferLine = "";
 	size_t StartPos = 0;
@@ -603,16 +603,17 @@ void writeCharConstructor(std::ofstream& fileStream)
 	fileStream << "\n\n// Called when the game starts or when spawned\n"
 		<< "void AGASCharacter::BeginPlay()\n{\n"
 		<< "\t" << "Super::BeginPlay();\n\n"
-		<< "\t" << "if (AbilitySystemComponent)\n{\n"
-		<< "\t" << "\t" << "//Link Attribute Set to Ability System Component\n"
-		<< "\t" << "\t" << "AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();\n\n"
-		<< "\t" << "\t" << "//Bindings for Attribute Change Delegates\n";
+		<< "\t" << "if (AbilitySystemComponent)\n\t{\n"
+		<< "\t" << "\t" << "if (AbilitySystemComponent->DefaultStartingData.Num() > 0 && AbilitySystemComponent->DefaultStartingData[0].Attributes != NULL && AbilitySystemComponent->DefaultStartingData[0].DefaultStartingTable != NULL)\n\t\t{\n"
+		<< "\t" << "\t" << "\t" << "//Link Attribute Set to Ability System Component\n"
+		<< "\t" << "\t" << "\t" << "AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();\n\n"
+		<< "\t" << "\t" << "\t" << "//Bindings for Attribute Change Delegates\n";
 
 	for (const std::string& str : vAttributeNames)
 	{
-		fileStream << "\t" << "\t" << "const_cast<UGASAttributeSet*>(AttributeSetVar)->" << str << "ChangeDelegate.AddDynamic(this, &AGASCharacter::On" << str << "ChangedNative);\n";
+		fileStream << "\t" << "\t" << "\t" << "const_cast<UGASAttributeSet*>(AttributeSetVar)->" << str << "ChangeDelegate.AddDynamic(this, &AGASCharacter::On" << str << "ChangedNative);\n";
 	}
-
+	fileStream << "\t\t}\n";
 	fileStream << "\t}\n" << "}\n\n";
 }
 
@@ -833,6 +834,11 @@ void FGASAssociateHelperModule::PluginButtonClicked()
 
 		//Call FNs and start file modifications
 		fillAttributeName(fileBufferConfig);
+		// Revert to default Attributes if we did not find any valid syntax attribute in config file
+		if (vAttributeNames.size() <= 0)
+		{
+			throw(vAttributeNames.size() <= 0);
+		}
 		fillAttributeMins(fileBufferConfig);
 		fillAttributeMax(fileBufferConfig);
 		fillAttributeBools(fileBufferConfig);
@@ -843,7 +849,6 @@ void FGASAssociateHelperModule::PluginButtonClicked()
 		writeAttrToCharCPP();
 		UE_LOG(LogTemp, Warning, TEXT("=====>Files Modified<====="));
 	}
-
 	catch(...)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("=====>Failed to open config file. Add some attributes and try again."));

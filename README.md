@@ -46,8 +46,6 @@ The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
  
  **Known Issues**
  - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [this issue](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
- - Error handling for Attribute Naming is missing. Engine will crash if DefaultGASAttribute.ini file is missing and GAS Associate Helper is used
- - Error Handling of empty Initial Attribute Data is missing. Engine will crash if Attribute Test Data on Ability System Component is not set correctly or left empty
  
 ### Video:
 Refer to the video for more information. (Ver 1.0.0)
@@ -55,6 +53,9 @@ Refer to the video for more information. (Ver 1.0.0)
 
 #### Update Log
 
+ - Ver 1.4.1-devtesting
+	 - Improved error handling for Attribute Names
+	 - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
  - Ver 1.3.0-devtesting
 	 - Added error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
 	 - Added error handling for empty DefaultGASAttributes.ini file. In case of any error reading the file, plugin will auto add a default attribute of Health and Max Health
