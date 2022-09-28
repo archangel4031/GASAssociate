@@ -153,4 +153,17 @@ public:
 	void GetAttackPowerValue(float& AttackPower);
 
 
+	//*******Ability Values Setter Functions**********
+
+	//Setter for Health Values
+	UFUNCTION(BlueprintCallable, Category = "GASGameplayAbility")
+	void SetHealthValues(float NewHealth, float NewMaxHealth);
+	//Setter for Mana Values
+	UFUNCTION(BlueprintCallable, Category = "GASGameplayAbility")
+	void SetManaValues(float NewMana, float NewMaxMana);
+	//Setter for AttackPower Values
+	UFUNCTION(BlueprintCallable, Category = "GASGameplayAbility")
+	void SetAttackPowerValue(float NewAttackPower);
+
+
 };

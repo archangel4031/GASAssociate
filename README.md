@@ -22,37 +22,12 @@ The plugin contains all the necessary C++ files required to make Gameplay Abilit
 
 The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 
-### How to Use
-###### Use Template Blank Project
-
- 1. Download the Blank Project according to your required Engine Version
- 2. Start working in the project directly OR
- 3. Import your content in this Blank Project and start using GAS
-
-###### Use Standalone Plugin Folder
-
- 1. Download the Plugins folder from the [***Releases***](https://github.com/archangel4031/GASAssociate/releases) Section according to your required Engine Version
- 2. If working with a Blueprint Only Project, first add a new C++ Class of Actor. If not continue to next step
- 3. Close the Editor and VS
- 4. Paste the Plugins folder in the Project Root Directory
- 5. Right Click on your .uproject file and select ***Generate Visual Studio Project Files***
- 6. Open the Visual Studio and build the project for first time use.
- 7. Once compiled, open the Engine and start using GAS
-
-**NOTES:** 
-
- - See linked video for further information on the capabilities of the plugin
- - The Plugin does not have *Error Checking* for Attribute names. Be careful while naming your attributes and only use alphabets without spaces
- 
- **Known Issues**
- - **FOR Mac Users Only:** You will need to manually add `NetCore` to `PublicDependencyModuleNames` array in ***YourProject.Build.cs*** file. (Refer to [this issue](https://github.com/archangel4031/GASAssociate/issues/1) for more information.)
- 
-### Video:
-Refer to the video for more information. (Ver 1.0.0)
-[GAS Associate | A plugin for Unreal Engine 5 and Unreal Engine 4](https://youtu.be/ett9ZTHYN8g)
-
 #### Update Log
 
+ - Ver 1.5.0-devtesting
+	 - Added functions for setting Attribute Values directly from Character Class. These can be used to initialize Attributes from Save File for example.
+	 - Updated GAS Associate Helper to create Setter functions for changing Attributes directly. Now GAS Associate Helper will also create these Setter functions for each Attribute
+	 - Updated README.md
  - Ver 1.4.1-devtesting
 	 - Improved error handling for Attribute Names
 	 - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine

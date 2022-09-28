@@ -312,3 +312,29 @@ void AGASCharacter::GetAttackPowerValue(float& AttackPower)
 	}
 }
 
+void AGASCharacter::SetHealthValues(float NewHealth, float NewMaxHealth)
+{
+	if (AttributeSetVar)
+	{
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetHealthAttribute(), EGameplayModOp::Override, NewHealth);
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetMaxHealthAttribute(), EGameplayModOp::Override, NewMaxHealth);
+	}
+}
+
+void AGASCharacter::SetManaValues(float NewMana, float NewMaxMana)
+{
+	if (AttributeSetVar)
+	{
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetManaAttribute(), EGameplayModOp::Override, NewMana);
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetMaxManaAttribute(), EGameplayModOp::Override, NewMaxMana);
+	}
+}
+
+void AGASCharacter::SetAttackPowerValue(float NewAttackPower)
+{
+	if (AttributeSetVar)
+	{
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetAttackPowerAttribute(), EGameplayModOp::Override, NewAttackPower);
+	}
+}
+
