@@ -57,7 +57,6 @@ Refer to the video for more information. (Video made for Plugin Ver 1.0.0)
   - Ver 1.5.0
      - Added functions for setting Attribute Values directly from Character Class. These can be used to initialize Attributes from Save File for example.
      - Updated GAS Associate Helper to create Setter functions for changing Attributes directly. Now GAS Associate Helper will also create these Setter functions for each Attribute
-     - Updated README.md
  - Ver 1.4.1
 	 - Improved error handling for Attribute Names. Now GAS Associate Helper will take proper inputs for Attribute Names. It will ignore wrong / invalid syntax names
      - Added error handling for empty starting data. Not setting Default Starting Data with Attribute Table will no longer crash the Engine
