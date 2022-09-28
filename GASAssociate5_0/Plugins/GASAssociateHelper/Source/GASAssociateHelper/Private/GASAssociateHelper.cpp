@@ -522,6 +522,32 @@ void writeGettersFN(std::ofstream& fileStream)
 	}
 }
 
+//FN: Make attribute Setters used in GASCharacter.h
+void writeSetterFN(std::ofstream& fileStream)
+{
+	fileStream << "\n\n\t//*******Ability Values Setter Functions**********\n\n";
+	int counter = 0;
+
+	//Read Vector and construct line
+	for (const std::string& str : vAttributeNames)
+	{
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "\t" << "//Setter for " << str << " Values\n"
+				<< "\t" << "UFUNCTION(BlueprintCallable, Category = \"GASGameplayAbility\")\n"
+				<< "\t" << "void Set" << str << "Values(float New" << str << ", float NewMax" << str << ");\n";
+		}
+		else
+		{
+			fileStream << "\t" << "//Setter for " << str << " Values\n"
+				<< "\t" << "UFUNCTION(BlueprintCallable, Category = \"GASGameplayAbility\")\n"
+				<< "\t" << "void Set" << str << "Value(float New" << str << ");\n";
+		}
+
+		counter++;
+	}
+}
+
 //FN: Write changes GASCharacter.h
 void writeAttrToCharHeader()
 {
@@ -569,6 +595,7 @@ void writeAttrToCharHeader()
 	writeEventTriggers(fileStreamO);
 	writeEventBindsBP(fileStreamO);
 	writeGettersFN(fileStreamO);
+	writeSetterFN(fileStreamO);
 
 	fileStreamO << "\n\n};\n";
 
@@ -652,6 +679,33 @@ void writeCharGetterFN(std::ofstream& fileStream)
 				<< "\t}\n}\n\n";
 		}
 		
+		counter++;
+	}
+}
+
+//FN: Make Attribute Value Setter of GASCharacter.cpp file
+void writeCharSetterFN(std::ofstream& fileStream)
+{
+	int counter = 0;
+
+	for (const std::string& str : vAttributeNames)
+	{
+		if (vUseMaxValueAttribute.at(counter))
+		{
+			fileStream << "void AGASCharacter::Set" << str << "Values(float New" << str << ", float NewMax" << str << ")\n{\n"
+				<< "\t" << "if (AttributeSetVar)\n\t{\n"
+				<< "\t\t" << "AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->Get" << str << "Attribute(), EGameplayModOp::Override, New" << str << ");\n"
+				<< "\t\t" << "AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetMax" << str << "Attribute(), EGameplayModOp::Override, NewMax" << str << "); \n"
+				<< "\t}\n}\n\n";
+		}
+		else
+		{
+			fileStream << "void AGASCharacter::Set" << str << "Value(float New" << str << ")\n{\n"
+				<< "\t" << "if (AttributeSetVar)\n\t{\n"
+				<< "\t\t" << "AbilitySystemCompnent->ApplyModToAttribute(AttributeSetVar->Get" << str << "Attribute(), EGameplayModOp::Override, New" << str << ");\n"
+				<< "\t}\n}\n\n";
+		}
+
 		counter++;
 	}
 }
@@ -752,6 +806,7 @@ void writeAttrToCharCPP()
 
 	writeCharBindFN(fileStreamO);
 	writeCharGetterFN(fileStreamO);
+	writeCharSetterFN(fileStreamO);
 
 	fileStreamO.close();
 }
