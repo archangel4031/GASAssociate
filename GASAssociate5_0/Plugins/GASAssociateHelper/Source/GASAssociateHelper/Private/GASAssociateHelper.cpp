@@ -702,7 +702,7 @@ void writeCharSetterFN(std::ofstream& fileStream)
 		{
 			fileStream << "void AGASCharacter::Set" << str << "Value(float New" << str << ")\n{\n"
 				<< "\t" << "if (AttributeSetVar)\n\t{\n"
-				<< "\t\t" << "AbilitySystemCompnent->ApplyModToAttribute(AttributeSetVar->Get" << str << "Attribute(), EGameplayModOp::Override, New" << str << ");\n"
+				<< "\t\t" << "AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->Get" << str << "Attribute(), EGameplayModOp::Override, New" << str << ");\n"
 				<< "\t}\n}\n\n";
 		}
 
