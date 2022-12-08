@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.5.1-devtesting",
+	"FriendlyName": "GASAssociateHelper",
+	"Description": "Helper to autofill Attributes",
+	"Category": "Other",
+	"CreatedBy": "Art World",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "GASAssociateHelper",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	],
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false
+}
