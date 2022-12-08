@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.5.1-devtesting",
+	"VersionName": "1.5.1",
 	"FriendlyName": "GAS Associate",
 	"Description": "A plugin that expoese GAS functionality to Blueprints YAY :)",
 	"Category": "Other",
