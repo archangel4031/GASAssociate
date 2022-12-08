@@ -24,6 +24,10 @@ The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 
 #### Update Log
 
+ - Ver 1.5.1-devtesting
+	 - Update plugin project to Unreal Engine 5.1 The project name has also changed
+	 - Update API to Unreal Engine version 5.1. Code changed in Target Actor Classes
+	 - Added prompt for using GAS Associate Helper. Now the plugin will explicitly ask you to press *Yes* before modifying the files
  - Ver 1.5.0-devtesting
 	 - Added functions for setting Attribute Values directly from Character Class. These can be used to initialize Attributes from Save File for example.
 	 - Updated GAS Associate Helper to create Setter functions for changing Attributes directly. Now GAS Associate Helper will also create these Setter functions for each Attribute
