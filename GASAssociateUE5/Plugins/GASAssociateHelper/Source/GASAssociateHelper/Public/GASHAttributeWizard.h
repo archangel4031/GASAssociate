@@ -22,15 +22,19 @@ struct FAttributeSettings
 {
 	GENERATED_BODY()
 
+	// Attribute Name that will be used through out the code
 	UPROPERTY(config, EditAnywhere, Category = Custom)
 	FString AttributeName;
 
+	// Minimum Value of Attribute for clamping
 	UPROPERTY(config, EditAnywhere, Category = Custom)
 	int32 MinValue;
 
+	// Maximum Value of Attribute for clamping
 	UPROPERTY(config, EditAnywhere, Category = Custom)
 	int32 MaxValue;
 
+	// Ignore Max Value and Create an attribute like Max{AttributeName} for clamping
 	UPROPERTY(config, EditAnywhere, Category = Custom)
 	bool UseMaxValueAttribute;
 };
@@ -44,10 +48,15 @@ class GASASSOCIATEHELPER_API UGASHAttributeWizard : public UObject
 public:
 	UGASHAttributeWizard(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(config, EditAnywhere, Category = CustomAttributes)
+	// Replication mode for Ability System
+	UPROPERTY(config, EditAnywhere, Category = CustomAttributesSetting)
 	RepMode AttributeRepMode;
 
-	UPROPERTY(config, EditAnywhere, Category = CustomAttributes)
+	// Attributes Array
+	UPROPERTY(config, EditAnywhere, Category = CustomAttributesSetting)
 	TArray<FAttributeSettings> AttributeList;
 	
+	// Support ALSV4 for UE5.1+
+	UPROPERTY(config, EditAnywhere, Category = AdvancedLocomotionSupport)
+	bool AddSupportForALS;
 };

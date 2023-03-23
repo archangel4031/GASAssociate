@@ -25,6 +25,10 @@
 		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
+		},
+		{
+			"Name": "ALSV4_CPP",
+			"Enabled": true
 		}
 	]
 }
