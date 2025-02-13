@@ -7,6 +7,12 @@
 [![GitHub forks](https://img.shields.io/github/forks/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/network/members)
 [![GitHub Repo stars](https://img.shields.io/github/stars/archangel4031/GASAssociate?style=social)](https://github.com/archangel4031/GASAssociate/stargazers)
 
+
+### IMPORTANT: Update for UE 5.5
+You can find a fork of this repo that works with UE 5.5 here. This is not tested nor maintained by me! But it works with UE 5.5
+
+Get it here: https://github.com/KSShreyas/GASAssociate
+
 ### Description:
 
 This is the source code for for the Plugin GAS Associate, that is supposed to make your life easier while using Unreal's Gameplay Ability System.
