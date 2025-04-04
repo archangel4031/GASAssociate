@@ -23,7 +23,8 @@ The plugin contains all the necessary C++ files required to make Gameplay Abilit
 The repo contains blank C++ based projects for both Unreal 4.27 and Unreal 5.0
 
 #### Update Log
-
+-   Ver 1.6.1-devtesting
+    - Compied for UE 5.5
 -   Ver 1.6.0-devtesting
     -   Added support for [Advanced Locomotion System - Community Version](https://github.com/dyanikoglu/ALS-Community)
     -   Simply Download the ALS Plugin and paste in Project **Plugins** Directory
