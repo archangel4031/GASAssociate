@@ -29,14 +29,18 @@ void AGASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	if (AbilitySystemComponent)
-{
-		//Link Attribute Set to Ability System Component
-		AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();
+	{
+		if (AbilitySystemComponent->DefaultStartingData.Num() > 0 && AbilitySystemComponent->DefaultStartingData[0].Attributes != NULL && AbilitySystemComponent->DefaultStartingData[0].DefaultStartingTable != NULL)
+		{
+			//Link Attribute Set to Ability System Component
+			AttributeSetVar = AbilitySystemComponent->GetSet<UGASAttributeSet>();
 
-		//Bindings for Attribute Change Delegates
-		const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
-		const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
-		const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
+			//Bindings for Attribute Change Delegates
+			const_cast<UGASAttributeSet*>(AttributeSetVar)->HealthChangeDelegate.AddDynamic(this, &AGASCharacter::OnHealthChangedNative);
+			const_cast<UGASAttributeSet*>(AttributeSetVar)->ManaChangeDelegate.AddDynamic(this, &AGASCharacter::OnManaChangedNative);
+			const_cast<UGASAttributeSet*>(AttributeSetVar)->AttackPowerChangeDelegate.AddDynamic(this, &AGASCharacter::OnAttackPowerChangedNative);
+			const_cast<UGASAttributeSet*>(AttributeSetVar)->DefenceChangeDelegate.AddDynamic(this, &AGASCharacter::OnDefenceChangedNative);
+		}
 	}
 }
 
@@ -283,6 +287,11 @@ void AGASCharacter::OnAttackPowerChangedNative(float AttackPower, int32 StackCou
 	OnAttackPowerChange(AttackPower, StackCount);
 }
 
+void AGASCharacter::OnDefenceChangedNative(float Defence, int32 StackCount)
+{
+	OnDefenceChange(Defence, StackCount);
+}
+
 void AGASCharacter::GetHealthValues(float& Health, float& MaxHealth)
 {
 	if (AttributeSetVar)
@@ -309,6 +318,14 @@ void AGASCharacter::GetAttackPowerValue(float& AttackPower)
 	}
 }
 
+void AGASCharacter::GetDefenceValue(float& Defence)
+{
+	if (AttributeSetVar)
+	{
+		Defence = AttributeSetVar->GetDefence();
+	}
+}
+
 void AGASCharacter::SetHealthValues(float NewHealth, float NewMaxHealth)
 {
 	if (AttributeSetVar)
@@ -332,6 +349,14 @@ void AGASCharacter::SetAttackPowerValue(float NewAttackPower)
 	if (AttributeSetVar)
 	{
 		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetAttackPowerAttribute(), EGameplayModOp::Override, NewAttackPower);
+	}
+}
+
+void AGASCharacter::SetDefenceValue(float NewDefence)
+{
+	if (AttributeSetVar)
+	{
+		AbilitySystemComponent->ApplyModToAttribute(AttributeSetVar->GetDefenceAttribute(), EGameplayModOp::Override, NewDefence);
 	}
 }
 

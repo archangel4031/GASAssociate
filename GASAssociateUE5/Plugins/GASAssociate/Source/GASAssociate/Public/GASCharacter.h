@@ -125,6 +125,8 @@ public:
 	virtual void OnManaChangedNative(float Mana, int32 StackCount);
 	UFUNCTION()
 	virtual void OnAttackPowerChangedNative(float AttackPower, int32 StackCount);
+	UFUNCTION()
+	virtual void OnDefenceChangedNative(float Defence, int32 StackCount);
 
 
 	//******Event that bind to native events and are implemented in BPs********
@@ -138,6 +140,9 @@ public:
 	//Event Trigger On AttackPower Change
 	UFUNCTION(BlueprintImplementableEvent, Category = "GASGameplayAbility")
 	void OnAttackPowerChange(float AttackPower, int32 StackCount);
+	//Event Trigger On Defence Change
+	UFUNCTION(BlueprintImplementableEvent, Category = "GASGameplayAbility")
+	void OnDefenceChange(float Defence, int32 StackCount);
 
 
 	//*******Ability Values Getter Functions**********
@@ -151,6 +156,9 @@ public:
 	//Getter for AttackPower Values
 	UFUNCTION(BlueprintPure, Category = "GASGameplayAbility")
 	void GetAttackPowerValue(float& AttackPower);
+	//Getter for Defence Values
+	UFUNCTION(BlueprintPure, Category = "GASGameplayAbility")
+	void GetDefenceValue(float& Defence);
 
 
 	//*******Ability Values Setter Functions**********
@@ -164,6 +172,9 @@ public:
 	//Setter for AttackPower Values
 	UFUNCTION(BlueprintCallable, Category = "GASGameplayAbility")
 	void SetAttackPowerValue(float NewAttackPower);
+	//Setter for Defence Values
+	UFUNCTION(BlueprintCallable, Category = "GASGameplayAbility")
+	void SetDefenceValue(float NewDefence);
 
 
 };

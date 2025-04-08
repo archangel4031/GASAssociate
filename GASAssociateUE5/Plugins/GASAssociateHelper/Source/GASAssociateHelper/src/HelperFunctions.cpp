@@ -609,6 +609,7 @@ void HelperFunctions::writeAttrToCharHeader()
 	std::smatch match;
 	std::regex regexPattern("//==PATTERN==");
 
+
 	//Store non changed lines to buffer until a PATTERN is found
 	while (getline(fileStream, lineBuffer))
 	{
@@ -629,7 +630,7 @@ void HelperFunctions::writeAttrToCharHeader()
 			{
 				lineBuffer.replace(lineBuffer.find(InheritDef), InheritDef.length(), InheritALS);
 			}
-			else{}
+			else {}
 			//Scan line and replace Default Constructor
 			if (lineBuffer.find(ConstructorDef) < lineBuffer.npos)
 			{
@@ -640,24 +641,28 @@ void HelperFunctions::writeAttrToCharHeader()
 		else
 		{
 			//Scan line and replace ALS Header File
-			if (lineBuffer.find(HeaderDef) < lineBuffer.npos)
+			if (lineBuffer.find(HeaderALS) < lineBuffer.npos)
 			{
+
 				lineBuffer.replace(lineBuffer.find(HeaderALS), HeaderALS.length(), HeaderDef);
 			}
-			else{}
+			else {}
 			//Scan line and replace ALS Inherit Class
-			if (lineBuffer.find(InheritDef) < lineBuffer.npos)
+			if (lineBuffer.find(InheritALS) < lineBuffer.npos)
 			{
+
 				lineBuffer.replace(lineBuffer.find(InheritALS), InheritALS.length(), InheritDef);
 			}
-			else{}
+			else {}
 			//Scan line and replace ALS Constructor
 			if (lineBuffer.find(ConstructorALS) < lineBuffer.npos)
 			{
+
 				lineBuffer.replace(lineBuffer.find(ConstructorALS), ConstructorALS.length(), ConstructorDef);
 			}
-			else{}
+			else {}
 		}
+
 		fileBufferPre.push_back(lineBuffer);
 
 		while (regex_search(lineBuffer, match, regexPattern))
@@ -674,8 +679,8 @@ void HelperFunctions::writeAttrToCharHeader()
 			break;
 		}
 	}
-
 	fileStream.close();
+
 
 	//Open file for write
 	std::ofstream fileStreamO(outCharPathHeader, std::ios_base::trunc);
@@ -693,7 +698,6 @@ void HelperFunctions::writeAttrToCharHeader()
 	fileStreamO << "\n\n};\n";
 
 	fileStreamO.close();
-
 }
 
 // FN: Make rest of Constructor of GASCharacter.cpp file
@@ -834,7 +838,7 @@ void HelperFunctions::writeAttrToCharCPP()
 			{
 				lineBuffer.replace(lineBuffer.find(ConstructorCPPDef), ConstructorCPPDef.length(), ConstructorCPPALS);
 			}
-			else{}
+			else {}
 		}
 		else
 		{
@@ -843,7 +847,7 @@ void HelperFunctions::writeAttrToCharCPP()
 			{
 				lineBuffer.replace(lineBuffer.find(ConstructorCPPALS), ConstructorCPPALS.length(), ConstructorCPPDef);
 			}
-			else{}
+			else {}
 		}
 		fileBufferPre.push_back(lineBuffer);
 
@@ -948,8 +952,7 @@ void HelperFunctions::updateCSAndUplugins()
 	std::ofstream OutCSFile(CSPath, std::ios_base::out);
 	std::ofstream OutUpluginFile(UpluginPath, std::ios_base::out);
 
-<<<<<<<< HEAD:GASAssociateUE5/Plugins/GASAssociateHelper/Source/GASAssociateHelper/src/HelperFunctions.cpp
-	
+
 
 	if (AddSupportForALS)
 	{
@@ -962,84 +965,6 @@ void HelperFunctions::updateCSAndUplugins()
 		}
 		line = "";
 		while (getline(LoadUpluginFile, line))
-========
-	if (UObjectInitialized())
-	{
-		UnregisterSettings();
-	}
-}
-
-// ************************************************ This is called on button press ************************************************
-void FGASAssociateHelperModule::PluginButtonClicked()
-{
-	// Put your "OnButtonClicked" stuff here
-	FText DialogText = FText::FText::Format(
-		LOCTEXT("PluginButtonDialogText", "Press YES to make changes to Files. Existing code will be lost. Compile to commit changes!\nSee Output Log for Details\nChange File Set: {0}, {1}"),
-		FText::FromString(TEXT("GASAttributeSet")),
-		FText::FromString(TEXT("GASCharacter"))
-	);
-	//Custom code goes here
-	
-	EAppReturnType::Type UserResponse = FMessageDialog::Open(EAppMsgType::YesNo, DialogText);
-
-	UE_LOG(LogTemp, Warning, TEXT("=====>Begin Modifications<====="));
-	UE_LOG(LogTemp, Warning, TEXT("Config file path: %s"), UTF8_TO_TCHAR(configFilePath.c_str()));
-	UE_LOG(LogTemp, Warning, TEXT("Attribute Set Header file path: %s"), UTF8_TO_TCHAR(outAttrPathHeader.c_str()));
-	UE_LOG(LogTemp, Warning, TEXT("Attribute CPP file path: %s"), UTF8_TO_TCHAR(outAttrPathCPP.c_str()));
-	UE_LOG(LogTemp, Warning, TEXT("Character Header file path: %s"), UTF8_TO_TCHAR(outCharPathHeader.c_str()));
-	UE_LOG(LogTemp, Warning, TEXT("Character CPP file path: %s"), UTF8_TO_TCHAR(outCharPathCPP.c_str()));
-	
-	if (UserResponse == EAppReturnType::Yes)
-	{
-		try
-		{
-			UE_LOG(LogTemp, Warning, TEXT("=====>Opeing .ini File"));
-			std::string fileBufferConfig = openFile(configFilePath);
-
-			UE_LOG(LogTemp, Warning, TEXT("=====>Clearing Previous Array Data"));
-			vAttributeNames.clear();
-			vAttributeMax.clear();
-			vAttributeMin.clear();
-			vUseMaxValueAttribute.clear();
-
-			//Call FNs and start file modifications
-			fillAttributeName(fileBufferConfig);
-			// Revert to default Attributes if we did not find any valid syntax attribute in config file
-			if (vAttributeNames.size() <= 0)
-			{
-				throw(vAttributeNames.size() <= 0);
-			}
-			fillAttributeMins(fileBufferConfig);
-			fillAttributeMax(fileBufferConfig);
-			fillAttributeBools(fileBufferConfig);
-			fillAttributeRepMode(fileBufferConfig);
-			writeAttrToHeader();
-			writeAttrToCPP();
-			writeAttrToCharHeader();
-			writeAttrToCharCPP();
-			UE_LOG(LogTemp, Warning, TEXT("=====>Files Modified<====="));
-		}
-		catch (...)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("=====>Failed to open config file. Add some attributes and try again."));
-			makeDefaultFile(configFilePath);
-			UE_LOG(LogTemp, Warning, TEXT("=====>Added Default Attributes of Health and Max Health"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("=====>Files NOT Modified!<====="));
-	}
-}
-
-void FGASAssociateHelperModule::RegisterMenus()
-{
-	// Owner will be used for cleanup in call to UToolMenus::UnregisterOwner
-	FToolMenuOwnerScoped OwnerScoped(this);
-
-	{
-		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Window");
->>>>>>>> de0e1c71a64323f48823886d996c80d9db38e101:GASAssociateUE5/Plugins/GASAssociateHelper/Source/GASAssociateHelper/Private/GASAssociateHelper.cpp
 		{
 			OutUpluginFile << line << std::endl;
 		}

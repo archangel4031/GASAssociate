@@ -26,8 +26,13 @@ void UGASAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMod
 	}
 	if (Data.EvaluatedData.Attribute == GetAttackPowerAttribute())
 	{
-		SetAttackPower(FMath::Clamp(GetAttackPower(), 0.0f, 20.0f));
+		SetAttackPower(FMath::Clamp(GetAttackPower(), 0.0f, 50.0f));
 		AttackPowerChangeDelegate.Broadcast(GetAttackPower(), Data.EffectSpec.StackCount);
+	}
+	if (Data.EvaluatedData.Attribute == GetDefenceAttribute())
+	{
+		SetDefence(FMath::Clamp(GetDefence(), 0.0f, 50.0f));
+		DefenceChangeDelegate.Broadcast(GetDefence(), Data.EffectSpec.StackCount);
 	}
 }
 
@@ -39,6 +44,7 @@ void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, AttackPower, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet, Defence, COND_None, REPNOTIFY_Always);
 }
 
 void UGASAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -60,4 +66,8 @@ void UGASAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana)
 void UGASAttributeSet::OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, AttackPower, OldAttackPower);
+}
+void UGASAttributeSet::OnRep_Defence(const FGameplayAttributeData& OldDefence)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, Defence, OldDefence);
 }
